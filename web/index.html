@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepSeek RAG · 深挖知识库</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">⚡</div>
+        <div>
+          <h1>DeepSeek RAG</h1>
+          <p>基于 DeepSeek 与本地向量检索的知识库问答</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">模型</span>
+          <span id="stat-model" class="stat-value">加载中…</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">知识块</span>
+          <span id="stat-chunks" class="stat-value">0</span>
+        </div>
+        <div class="status"><span class="dot"></span><span id="status-text">连接中</span></div>
+      </div>
+    </header>
+
+    <main id="chat" class="chat">
+      <div class="empty" id="empty">
+        <div class="empty-icon">📚</div>
+        <h2>把资料交给 AI，让答案有据可查</h2>
+        <p>支持 TXT / Markdown / PDF / DOCX，上传后自动切块、向量化、检索增强生成。</p>
+      </div>
+    </main>
+
+    <footer class="composer">
+      <div class="upload-row">
+        <label class="upload-btn" for="file-input">
+          <span>📄</span> 上传资料
+        </label>
+        <input type="file" id="file-input" accept=".txt,.md,.markdown,.pdf,.docx" hidden />
+        <span id="upload-status" class="upload-status"></span>
+      </div>
+      <form id="chat-form" class="chat-form">
+        <textarea id="message-input" rows="2" placeholder="输入问题，例如：这个项目的核心架构是什么？"></textarea>
+        <button type="submit" id="send-btn">发送</button>
+      </form>
+      <p class="hint">Ctrl + Enter 发送 · 回答由大模型生成，请结合来源信息判断准确性</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

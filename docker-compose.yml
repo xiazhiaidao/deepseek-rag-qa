@@ -1,0 +1,14 @@
+services:
+  deepseek-rag-qa:
+    build: .
+    container_name: deepseek-rag-qa
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - rag_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  rag_data:
