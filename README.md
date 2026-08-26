@@ -20,7 +20,9 @@
 
 ## 🖼️ 演示
 
-> 截图 / GIF 占位：建议将 Web UI 截图保存为 `docs/demo.png` 或 `docs/demo.gif`，投递前替换为真实截图。
+> ![Web UI 演示](docs/demo.png)
+>
+> 上图展示了真实的问答交互：输入问题后，系统检索知识库并生成带引用的中文回答。
 
 CLI 端到端演示：
 
@@ -275,11 +277,9 @@ docker compose up --build -d
 
 ## 📞 联系方式
 
-> **投递简历前请替换为真实信息。**
-
-- 姓名：`[你的名字]`
-- 邮箱：`[your-email@example.com]`
-- GitHub：`[https://github.com/your-name]`
+- 姓名：刘勇琨
+- 邮箱：2291934347@qq.com
+- GitHub：https://github.com/xiazhiaidao
 
 ---
 
