@@ -2,7 +2,9 @@
 
 一个基于 **DeepSeek 兼容 API + 本地向量检索（RAG）** 的智能问答机器人。
 
-上传知识文档后，系统会自动完成：**文本切块 → 本地 Embedding → 向量检索 Top-K → 大模型生成带引用的回答**。适合快速搭建企业知识库问答、个人文档助理，以及作为 **Python 后端 / AI 应用 / LLM 实习岗位** 的项目作品。
+上传知识文档后，系统会自动完成：**文本切块 → 本地 Embedding → 向量检索 Top-K → 大模型生成带来源的回答**，用于企业知识库问答与个人文档检索。
+
+**重点实现：** 中文文本切块、本地 BGE 向量化、NumPy 持久化索引、Top-K 相似度过滤、无命中拒答，以及来源片段返回。无有效资料时不调用生成模型；SQLite 保存问答记录，便于演示完整接口链路。
 
 ---
 
@@ -12,7 +14,8 @@
 - 🔍 **本地向量检索**：使用 `BAAI/bge-small-zh-v1.5`（512 维）+ 自研 NumPy 向量库，不依赖外部 Embedding 服务
 - 🤖 **LLM 生成回答**：接入 OpenAI 兼容接口，模型 `deepseek-v4-flash`
 - 🧠 **中文优化**：切块器按中文标点优先切分，回答风格面向中文用户
-- 💬 **会话记忆**：SQLite 保存聊天记录，可切换 MySQL
+- 💬 **聊天记录**：SQLite 按会话保存问答，可切换 MySQL；当前生成请求不包含历史消息
+- 🛑 **无依据拒答**：低于 `SCORE_THRESHOLD` 的片段不进入上下文；无有效片段时直接返回无法回答
 - 🌐 **Web UI**：原生暗色聊天界面，开箱即用
 - 🚀 **FastAPI 后端**：REST API 清晰，方便二次开发与部署
 
@@ -61,7 +64,7 @@ python scripts/demo.py
 ### 1. 克隆项目
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/xiazhiaidao/deepseek-rag-qa.git
 cd deepseek-rag-qa
 ```
 
@@ -242,6 +245,7 @@ deepseek-rag-qa/
 | `EMBEDDING_MODEL` | `BAAI/bge-small-zh-v1.5` | 本地向量模型 |
 | `EMBEDDING_DIM` | `512` | 向量维度 |
 | `TOP_K` | `4` | 检索召回数量 |
+| `SCORE_THRESHOLD` | `0.35` | 最低余弦相似度；按知识库调参，不是置信概率 |
 | `CHUNK_SIZE` | `500` | 切块大小 |
 | `CHUNK_OVERLAP` | `80` | 切块重叠 |
 | `HF_ENDPOINT` | `https://hf-mirror.com` | HuggingFace 镜像 |
@@ -271,7 +275,21 @@ docker compose up --build -d
 - [ ] 接入流式输出（SSE）
 - [ ] 前端增加会话管理 / 文件管理页面
 - [x] 自动化测试与 CI（pytest + GitHub Actions）
+- [x] 最低相关度过滤与无命中拒答（离线回归测试）
 - [ ] 部署上线
+
+---
+
+## 验证与实现边界
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest -q
+```
+
+测试使用临时索引与假 LLM，覆盖解析、切块、向量存取、API，以及空检索/阈值边界/来源透传；不需要 API Key 或下载模型。`scripts/demo.py` 是真实模型演示，需本地模型缓存和可用的 LLM 配置。
+
+当前检索是单路稠密向量 Top-K，未实现混合检索或 rerank；返回的来源是检索片段，尚未校验答案逐句引用的正确性；未建立真实问答评测集，因此不声明召回率或答案准确率。并发写入采用进程内锁，适合单进程演示部署。
 
 ---
 

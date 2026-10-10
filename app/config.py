@@ -1,5 +1,6 @@
 """应用配置：从 .env 读取，支持环境变量覆盖。"""
 from pathlib import Path
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-small-zh-v1.5"
     embedding_dim: int = 512
     top_k: int = 4
+    score_threshold: float = Field(default=0.35, ge=-1.0, le=1.0)
     chunk_size: int = 500
     chunk_overlap: int = 80
 
